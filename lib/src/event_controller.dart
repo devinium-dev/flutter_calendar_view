@@ -71,19 +71,19 @@ class EventController<T extends Object?> extends ChangeNotifier {
   //#region Public Methods
   /// Add all the events in the list
   /// If there is an event with same date then
-  void addAll(List<CalendarEventData<T>> events) {
+  void addAllEvents(List<CalendarEventData<T>> events) {
     for (final event in events) _calendarData.addEvent(event);
     notifyListeners();
   }
 
   /// Adds a single event in [_events]
-  void add(CalendarEventData<T> event) {
+  void addEvent(CalendarEventData<T> event) {
     _calendarData.addEvent(event);
     notifyListeners();
   }
 
   /// Removes [event] from this controller.
-  void remove(CalendarEventData<T> event) {
+  void removeEvent(CalendarEventData<T> event) {
     _calendarData.removeEvent(event);
     notifyListeners();
   }
@@ -93,19 +93,19 @@ class EventController<T extends Object?> extends ChangeNotifier {
   /// If [event] is not found in the controller, it will add the [updated]
   /// event in the controller.
   ///
-  void update(CalendarEventData<T> event, CalendarEventData<T> updated) {
+  void updateEvent(CalendarEventData<T> event, CalendarEventData<T> updated) {
     _calendarData.updateEvent(event, updated);
     notifyListeners();
   }
 
   /// Removes all the [events] from this controller.
-  void removeAll(List<CalendarEventData<T>> events) {
+  void removeAllEvents(List<CalendarEventData<T>> events) {
     for (final event in events) _calendarData.removeEvent(event);
     notifyListeners();
   }
 
   /// Removes multiple [event] from this controller.
-  void removeWhere(TestPredicate<CalendarEventData<T>> test) {
+  void removeEventsWhere(TestPredicate<CalendarEventData<T>> test) {
     _calendarData.removeWhere(test);
     notifyListeners();
   }

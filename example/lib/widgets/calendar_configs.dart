@@ -102,7 +102,7 @@ class CalendarConfig extends StatelessWidget {
                   onEventAdd: (event) {
                     CalendarControllerProvider.of(context)
                         .controller
-                        .add(event);
+                        .addEvent(event);
                   },
                 ),
               ],

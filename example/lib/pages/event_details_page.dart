@@ -93,7 +93,7 @@ class DetailsPage extends StatelessWidget {
                   onPressed: () {
                     CalendarControllerProvider.of(context)
                         .controller
-                        .remove(event);
+                        .removeEvent(event);
                     Navigator.of(context).pop();
                   },
                   child: Text('Delete Event'),

@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CalendarControllerProvider(
-      controller: EventController()..addAll(_events),
+      controller: EventController()..addAllEvents(_events),
       child: MaterialApp(
         title: 'Flutter Calendar Page Demo',
         debugShowCheckedModeBanner: false,
