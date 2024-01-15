@@ -99,7 +99,7 @@ class FilledCell<T extends Object?> extends StatelessWidget {
   /// color of highlighted cell title
   final Color highlightedTitleColor;
 
-  final Function()? onDayTextTap;
+  final Function(DateTime)? onDayTextTap;
 
   /// This class will defines how cell will be displayed.
   /// This widget will display all the events as tile below date title.
@@ -144,7 +144,7 @@ class FilledCell<T extends Object?> extends StatelessWidget {
                 fontSize: 12,
               ),
             ),
-            onTap: onDayTextTap,
+            onTap: () => onDayTextTap?.call(date),
           ),
           if (events.isNotEmpty)
             Expanded(
@@ -167,8 +167,13 @@ class FilledCell<T extends Object?> extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4.0),
                           ),
                           margin: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 3.0),
-                          padding: const EdgeInsets.all(2.0),
+                            vertical: 2.0,
+                            // horizontal: 3.0,
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 2.0,
+                            horizontal: 7.0,
+                          ),
                           alignment: Alignment.center,
                           child: Row(
                             children: [
