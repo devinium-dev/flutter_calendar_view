@@ -80,7 +80,10 @@ class _LiveTimeIndicatorState extends State<LiveTimeIndicator> {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: Size(widget.width, widget.height),
+      size: Size(
+        widget.liveTimeIndicatorSettings.widthEnds ?? widget.width,
+        widget.height,
+      ),
       painter: CurrentTimeLinePainter(
         color: widget.liveTimeIndicatorSettings.color,
         height: widget.liveTimeIndicatorSettings.height,

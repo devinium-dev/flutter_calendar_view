@@ -14,6 +14,7 @@ class HourIndicatorSettings {
   final LineStyle lineStyle;
   final double dashWidth;
   final double dashSpaceWidth;
+  final double? widthEnds;
 
   /// Settings for hour lines
   const HourIndicatorSettings({
@@ -23,6 +24,7 @@ class HourIndicatorSettings {
     this.lineStyle = LineStyle.solid,
     this.dashWidth = 4,
     this.dashSpaceWidth = 4,
+    this.widthEnds,
   }) : assert(height >= 0, "Height must be greater than or equal to 0.");
 
   factory HourIndicatorSettings.none() => HourIndicatorSettings(
