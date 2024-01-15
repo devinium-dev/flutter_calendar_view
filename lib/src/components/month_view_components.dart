@@ -10,6 +10,7 @@ import '../constants.dart';
 import '../extensions.dart';
 import '../style/header_style.dart';
 import '../typedefs.dart';
+import 'clickable_circle_avatar.dart';
 import 'common_components.dart';
 
 class CircularCell extends StatelessWidget {
@@ -98,6 +99,8 @@ class FilledCell<T extends Object?> extends StatelessWidget {
   /// color of highlighted cell title
   final Color highlightedTitleColor;
 
+  final Function()? onDayTextTap;
+
   /// This class will defines how cell will be displayed.
   /// This widget will display all the events as tile below date title.
   const FilledCell({
@@ -114,6 +117,7 @@ class FilledCell<T extends Object?> extends StatelessWidget {
     this.titleColor = Constants.black,
     this.highlightedTitleColor = Constants.white,
     this.dateStringBuilder,
+    this.onDayTextTap,
   }) : super(key: key);
 
   @override
@@ -125,7 +129,7 @@ class FilledCell<T extends Object?> extends StatelessWidget {
           SizedBox(
             height: 5.0,
           ),
-          CircleAvatar(
+          ClickableCircleAvatar(
             radius: highlightRadius,
             backgroundColor:
                 shouldHighlight ? highlightColor : Colors.transparent,
@@ -140,11 +144,12 @@ class FilledCell<T extends Object?> extends StatelessWidget {
                 fontSize: 12,
               ),
             ),
+            onTap: onDayTextTap,
           ),
           if (events.isNotEmpty)
             Expanded(
               child: Container(
-                margin: EdgeInsets.only(top: 5.0),
+                margin: EdgeInsets.only(top: 0.0, right: 10.0),
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(),
                 child: SingleChildScrollView(
