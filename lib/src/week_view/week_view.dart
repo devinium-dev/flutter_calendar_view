@@ -774,11 +774,11 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
       DateTime startDuration,
       DateTime endDuration) {
     if (events.isNotEmpty) {
-      final startTime = events[0].startTime;
-      final endTime = events[0].endTime;
+      // final startTime = events[0].startTime;
+      // final endTime = events[0].endTime;
 
-      final timeDurationText =
-          '${DateFormat('h:mm').format(startTime!)} — ${DateFormat('h:mm').format(endTime!)}';
+      // final timeDurationText =
+      //     '${DateFormat('h:mm').format(startTime!)} — ${DateFormat('h:mm').format(endTime!)}';
 
       return RoundedEventTile(
         timeDurationText: '',

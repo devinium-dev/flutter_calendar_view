@@ -60,79 +60,11 @@ class RoundedEventTile extends StatelessWidget {
     this.descriptionStyle,
   }) : super(key: key);
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Container(
-  //     padding: padding,
-  //     margin: margin,
-  //     decoration: BoxDecoration(
-  //       color: backgroundColor,
-  //       borderRadius: borderRadius,
-  //     ),
-  //     child: LayoutBuilder(
-  //       builder: (context, constraints) {
-  //         return Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             if (title.isNotEmpty)
-  //               Text(
-  //                 title,
-  //                 style: titleStyle ??
-  //                     TextStyle(
-  //                       fontSize:
-  //                           calculateFontSize(constraints.maxWidth, 15.0, 18.0),
-  //                       color: backgroundColor.accent,
-  //                     ),
-  //                 softWrap: true,
-  //                 overflow: TextOverflow.fade,
-  //               ),
-  //             if (timeDurationText != null &&
-  //                 timeDurationText!.trim().isNotEmpty)
-  //               Text(
-  //                 timeDurationText!,
-  //                 style: TextStyle(
-  //                   fontSize:
-  //                       calculateFontSize(constraints.maxWidth, 12.0, 14.0),
-  //                   color: backgroundColor.accent,
-  //                 ),
-  //                 softWrap: true,
-  //                 overflow: TextOverflow.fade,
-  //               ),
-  //             if (description?.isNotEmpty ?? false)
-  //               Expanded(
-  //                 child: Padding(
-  //                   padding: const EdgeInsets.only(bottom: 15.0),
-  //                   child: Text(
-  //                     description!,
-  //                     style: descriptionStyle ??
-  //                         TextStyle(
-  //                           fontSize: calculateFontSize(
-  //                               constraints.maxWidth, 12.0, 14.0),
-  //                           color: backgroundColor.accent.withAlpha(200),
-  //                         ),
-  //                   ),
-  //                 ),
-  //               ),
-  //             if (totalEvents > 1)
-  //               Expanded(
-  //                 child: Text(
-  //                   "+${totalEvents - 1} more",
-  //                   style: (descriptionStyle ??
-  //                           TextStyle(
-  //                             color: backgroundColor.accent.withAlpha(200),
-  //                           ))
-  //                       .copyWith(
-  //                           fontSize: calculateFontSize(
-  //                               constraints.maxWidth, 12.0, 14.0)),
-  //                 ),
-  //               ),
-  //           ],
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
+  bool get hasTitle => title.isNotEmpty;
+  bool get hasTimeDurationText =>
+      timeDurationText != null && timeDurationText!.trim().isNotEmpty;
+  bool get hasDescription =>
+      description != null && description!.trim().isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -145,77 +77,124 @@ class RoundedEventTile extends StatelessWidget {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    if (title.isNotEmpty)
-                      TextSpan(
-                        text: '$title\n',
-                        style: titleStyle ??
-                            TextStyle(
-                              fontSize: calculateFontSize(
-                                  constraints.maxWidth, 15.0, 18.0),
-                              color: backgroundColor.accent,
-                              height: 1.5,
-                            ),
-                      ),
-                    if (timeDurationText != null &&
-                        timeDurationText!.trim().isNotEmpty)
-                      TextSpan(
-                        text: '${timeDurationText!}',
-                        style: TextStyle(
-                          fontSize: calculateFontSize(
-                              constraints.maxWidth, 12.0, 14.0),
-                          color: backgroundColor.accent,
-                          height: 1.5,
-                        ),
-                      ),
-                  ],
+          final availableHeight = constraints.maxHeight;
+
+          final titleTextStyle = titleStyle ??
+              TextStyle(
+                fontSize: calculateFontSize(
+                  constraints.maxWidth,
+                  14.0,
+                  16.0,
                 ),
-                softWrap: true,
-                overflow: TextOverflow.fade,
-              ),
-              // if (description?.isNotEmpty ?? false)
-              //   Expanded(
-              //     child: Padding(
-              //       padding: const EdgeInsets.only(bottom: 15.0),
-              //       child: RichText(
-              //         text: TextSpan(
-              //           text: '${description!}\n',
-              //           style: descriptionStyle ??
-              //               TextStyle(
-              //                 fontSize: calculateFontSize(
-              //                     constraints.maxWidth, 12.0, 14.0),
-              //                 color: backgroundColor.accent.withAlpha(200),
-              //               ),
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // if (totalEvents > 1)
-              //   Expanded(
-              //     child: RichText(
-              //       text: TextSpan(
-              //         text: "+${totalEvents - 1} more",
-              //         style: (descriptionStyle ??
-              //                 TextStyle(
-              //                   color: backgroundColor.accent.withAlpha(200),
-              //                 ))
-              //             .copyWith(
-              //                 fontSize: calculateFontSize(
-              //                     constraints.maxWidth, 12.0, 14.0)),
-              //       ),
-              //     ),
-              //   ),
-            ],
+                color: backgroundColor.accent,
+                height: 1.5,
+              );
+
+          final timeDurationTextStyle = TextStyle(
+            fontSize: calculateFontSize(
+              constraints.maxWidth,
+              12.0,
+              14.0,
+            ),
+            color: backgroundColor.accent,
+            height: 1.5,
           );
+
+          final descriptionTextStyle = descriptionStyle ??
+              TextStyle(
+                fontSize: calculateFontSize(
+                  constraints.maxWidth,
+                  12.0,
+                  14.0,
+                ),
+                color: backgroundColor.accent.withAlpha(200),
+              );
+
+          final shouldRenderTitle = hasTitle &&
+              availableHeight >=
+                  calculateTextHeight(
+                    title,
+                    titleTextStyle,
+                    constraints.maxWidth,
+                  );
+          final shouldRenderTimeDurationText = hasTimeDurationText &&
+              availableHeight >=
+                  calculateTextHeight(
+                    timeDurationText!,
+                    null,
+                    constraints.maxWidth,
+                  );
+          final shouldRenderDescription = hasDescription &&
+              availableHeight >=
+                  calculateTextHeight(
+                    description!,
+                    descriptionTextStyle,
+                    constraints.maxWidth,
+                  );
+          final shouldRenderMore = totalEvents > 1 &&
+              availableHeight >=
+                  calculateTextHeight(
+                    "+${totalEvents - 1} more",
+                    descriptionTextStyle,
+                    constraints.maxWidth,
+                  );
+
+          if (shouldRenderTitle ||
+              shouldRenderTimeDurationText ||
+              shouldRenderDescription ||
+              shouldRenderMore) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (shouldRenderTitle)
+                  Text(
+                    title,
+                    style: titleTextStyle,
+                    softWrap: true,
+                    overflow: TextOverflow.fade,
+                  ),
+                if (shouldRenderTimeDurationText)
+                  Text(
+                    timeDurationText!,
+                    style: timeDurationTextStyle,
+                    softWrap: true,
+                    overflow: TextOverflow.fade,
+                  ),
+                if (shouldRenderDescription)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 15.0),
+                    child: Text(
+                      description!,
+                      style: descriptionTextStyle,
+                      softWrap: true,
+                      overflow: TextOverflow.fade,
+                    ),
+                  ),
+                if (shouldRenderMore)
+                  Text(
+                    "+${totalEvents - 1} more",
+                    style: descriptionTextStyle,
+                    softWrap: true,
+                    overflow: TextOverflow.fade,
+                  ),
+              ],
+            );
+          }
+
+          return const SizedBox();
         },
       ),
     );
+  }
+
+  double calculateTextHeight(String text, TextStyle? style, double maxWidth) {
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: maxWidth);
+    return textPainter.size.height;
   }
 
   double calculateFontSize(
