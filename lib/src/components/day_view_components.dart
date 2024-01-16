@@ -76,8 +76,8 @@ class RoundedEventTile extends StatelessWidget {
         borderRadius: borderRadius,
       ),
       child: LayoutBuilder(
-        builder: (context, constraints) {
-          final availableHeight = constraints.maxHeight;
+        builder: (_, constraints) {
+          double remainingHeight = constraints.maxHeight;
 
           final titleTextStyle = titleStyle ??
               TextStyle(
@@ -110,79 +110,79 @@ class RoundedEventTile extends StatelessWidget {
                 color: backgroundColor.accent.withAlpha(200),
               );
 
-          final shouldRenderTitle = hasTitle &&
-              availableHeight >=
-                  calculateTextHeight(
-                    title,
-                    titleTextStyle,
-                    constraints.maxWidth,
-                  );
-          final shouldRenderTimeDurationText = hasTimeDurationText &&
-              availableHeight >=
-                  calculateTextHeight(
-                    timeDurationText!,
-                    null,
-                    constraints.maxWidth,
-                  );
-          final shouldRenderDescription = hasDescription &&
-              availableHeight >=
-                  calculateTextHeight(
-                    description!,
-                    descriptionTextStyle,
-                    constraints.maxWidth,
-                  );
-          final shouldRenderMore = totalEvents > 1 &&
-              availableHeight >=
-                  calculateTextHeight(
-                    "+${totalEvents - 1} more",
-                    descriptionTextStyle,
-                    constraints.maxWidth,
-                  );
+          List<Widget> renderedTexts = [];
 
-          if (shouldRenderTitle ||
-              shouldRenderTimeDurationText ||
-              shouldRenderDescription ||
-              shouldRenderMore) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (shouldRenderTitle)
-                  Text(
-                    title,
-                    style: titleTextStyle,
-                    softWrap: true,
-                    overflow: TextOverflow.fade,
-                  ),
-                if (shouldRenderTimeDurationText)
-                  Text(
-                    timeDurationText!,
-                    style: timeDurationTextStyle,
-                    softWrap: true,
-                    overflow: TextOverflow.fade,
-                  ),
-                if (shouldRenderDescription)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 15.0),
-                    child: Text(
-                      description!,
-                      style: descriptionTextStyle,
-                      softWrap: true,
-                      overflow: TextOverflow.fade,
-                    ),
-                  ),
-                if (shouldRenderMore)
-                  Text(
-                    "+${totalEvents - 1} more",
-                    style: descriptionTextStyle,
-                    softWrap: true,
-                    overflow: TextOverflow.fade,
-                  ),
-              ],
+          void addTextWidget(Widget textWidget, double textHeight) {
+            remainingHeight -= textHeight;
+            if (remainingHeight >= 0) {
+              renderedTexts.add(textWidget);
+            }
+          }
+
+          if (hasTitle) {
+            final titleHeight = calculateTextHeight(
+                title, titleTextStyle, constraints.maxWidth);
+            addTextWidget(
+              Text(
+                title,
+                style: titleTextStyle,
+                softWrap: true,
+                overflow: TextOverflow.fade,
+              ),
+              titleHeight,
             );
           }
 
-          return const SizedBox();
+          if (hasTimeDurationText) {
+            final timeDurationHeight = calculateTextHeight(
+                timeDurationText!, timeDurationTextStyle, constraints.maxWidth);
+            addTextWidget(
+              Text(
+                timeDurationText!,
+                style: timeDurationTextStyle,
+                softWrap: true,
+                overflow: TextOverflow.fade,
+              ),
+              timeDurationHeight,
+            );
+          }
+
+          if (hasDescription) {
+            final descriptionHeight = calculateTextHeight(
+                description!, descriptionTextStyle, constraints.maxWidth);
+            addTextWidget(
+              Padding(
+                padding: const EdgeInsets.only(bottom: 15.0),
+                child: Text(
+                  description!,
+                  style: descriptionTextStyle,
+                  softWrap: true,
+                  overflow: TextOverflow.fade,
+                ),
+              ),
+              descriptionHeight,
+            );
+          }
+
+          if (totalEvents > 1) {
+            final moreHeight = calculateTextHeight("+${totalEvents - 1} more",
+                descriptionTextStyle, constraints.maxWidth);
+            addTextWidget(
+              Text(
+                "+${totalEvents - 1} more",
+                style: descriptionTextStyle,
+                softWrap: true,
+                overflow: TextOverflow.fade,
+              ),
+              moreHeight,
+            );
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: renderedTexts,
+          );
         },
       ),
     );
