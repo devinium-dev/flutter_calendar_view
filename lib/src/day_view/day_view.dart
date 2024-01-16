@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../calendar_constants.dart';
 import '../calendar_controller_provider.dart';
@@ -661,8 +662,15 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     DateTime startDuration,
     DateTime endDuration,
   ) {
-    if (events.isNotEmpty)
+    if (events.isNotEmpty) {
+      final startTime = events[0].startTime;
+      final endTime = events[0].endTime;
+
+      final timeDurationText =
+          '${DateFormat('h:mm').format(startTime!)} — ${DateFormat('h:mm').format(endTime!)}';
+
       return RoundedEventTile(
+        timeDurationText: timeDurationText,
         borderRadius: BorderRadius.circular(10.0),
         title: events[0].title,
         totalEvents: events.length - 1,
@@ -673,8 +681,9 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
         titleStyle: events[0].titleStyle,
         descriptionStyle: events[0].descriptionStyle,
       );
-    else
-      return SizedBox.shrink();
+    }
+
+    return SizedBox.shrink();
   }
 
   /// Default view header builder. This builder will be used if

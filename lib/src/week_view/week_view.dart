@@ -3,6 +3,7 @@
 // that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../calendar_constants.dart';
 import '../calendar_controller_provider.dart';
@@ -772,8 +773,15 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
       Rect boundary,
       DateTime startDuration,
       DateTime endDuration) {
-    if (events.isNotEmpty)
+    if (events.isNotEmpty) {
+      final startTime = events[0].startTime;
+      final endTime = events[0].endTime;
+
+      final timeDurationText =
+          '${DateFormat('h:mm').format(startTime!)} — ${DateFormat('h:mm').format(endTime!)}';
+
       return RoundedEventTile(
+        timeDurationText: '',
         borderRadius: BorderRadius.circular(6.0),
         title: events[0].title,
         titleStyle: events[0].titleStyle ??
@@ -786,8 +794,9 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
         padding: EdgeInsets.all(7.0),
         backgroundColor: events[0].color,
       );
-    else
-      return Container();
+    }
+
+    return Container();
   }
 
   /// Default view header builder. This builder will be used if

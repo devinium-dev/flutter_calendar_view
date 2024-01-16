@@ -17,6 +17,8 @@ class RoundedEventTile extends StatelessWidget {
   /// Title of the tile.
   final String title;
 
+  final String? timeDurationText;
+
   /// Description of the tile.
   final String? description;
 
@@ -47,6 +49,7 @@ class RoundedEventTile extends StatelessWidget {
   const RoundedEventTile({
     Key? key,
     required this.title,
+    this.timeDurationText,
     this.padding = EdgeInsets.zero,
     this.margin = EdgeInsets.zero,
     this.description,
@@ -57,6 +60,80 @@ class RoundedEventTile extends StatelessWidget {
     this.descriptionStyle,
   }) : super(key: key);
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Container(
+  //     padding: padding,
+  //     margin: margin,
+  //     decoration: BoxDecoration(
+  //       color: backgroundColor,
+  //       borderRadius: borderRadius,
+  //     ),
+  //     child: LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         return Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             if (title.isNotEmpty)
+  //               Text(
+  //                 title,
+  //                 style: titleStyle ??
+  //                     TextStyle(
+  //                       fontSize:
+  //                           calculateFontSize(constraints.maxWidth, 15.0, 18.0),
+  //                       color: backgroundColor.accent,
+  //                     ),
+  //                 softWrap: true,
+  //                 overflow: TextOverflow.fade,
+  //               ),
+  //             if (timeDurationText != null &&
+  //                 timeDurationText!.trim().isNotEmpty)
+  //               Text(
+  //                 timeDurationText!,
+  //                 style: TextStyle(
+  //                   fontSize:
+  //                       calculateFontSize(constraints.maxWidth, 12.0, 14.0),
+  //                   color: backgroundColor.accent,
+  //                 ),
+  //                 softWrap: true,
+  //                 overflow: TextOverflow.fade,
+  //               ),
+  //             if (description?.isNotEmpty ?? false)
+  //               Expanded(
+  //                 child: Padding(
+  //                   padding: const EdgeInsets.only(bottom: 15.0),
+  //                   child: Text(
+  //                     description!,
+  //                     style: descriptionStyle ??
+  //                         TextStyle(
+  //                           fontSize: calculateFontSize(
+  //                               constraints.maxWidth, 12.0, 14.0),
+  //                           color: backgroundColor.accent.withAlpha(200),
+  //                         ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             if (totalEvents > 1)
+  //               Expanded(
+  //                 child: Text(
+  //                   "+${totalEvents - 1} more",
+  //                   style: (descriptionStyle ??
+  //                           TextStyle(
+  //                             color: backgroundColor.accent.withAlpha(200),
+  //                           ))
+  //                       .copyWith(
+  //                           fontSize: calculateFontSize(
+  //                               constraints.maxWidth, 12.0, 14.0)),
+  //                 ),
+  //               ),
+  //           ],
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -66,51 +143,98 @@ class RoundedEventTile extends StatelessWidget {
         color: backgroundColor,
         borderRadius: borderRadius,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (title.isNotEmpty)
-            Expanded(
-              child: Text(
-                title,
-                style: titleStyle ??
-                    TextStyle(
-                      fontSize: 20,
-                      color: backgroundColor.accent,
-                    ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    if (title.isNotEmpty)
+                      TextSpan(
+                        text: '$title\n',
+                        style: titleStyle ??
+                            TextStyle(
+                              fontSize: calculateFontSize(
+                                  constraints.maxWidth, 15.0, 18.0),
+                              color: backgroundColor.accent,
+                              height: 1.5,
+                            ),
+                      ),
+                    if (timeDurationText != null &&
+                        timeDurationText!.trim().isNotEmpty)
+                      TextSpan(
+                        text: '${timeDurationText!}',
+                        style: TextStyle(
+                          fontSize: calculateFontSize(
+                              constraints.maxWidth, 12.0, 14.0),
+                          color: backgroundColor.accent,
+                          height: 1.5,
+                        ),
+                      ),
+                  ],
+                ),
                 softWrap: true,
                 overflow: TextOverflow.fade,
               ),
-            ),
-          if (description?.isNotEmpty ?? false)
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 15.0),
-                child: Text(
-                  description!,
-                  style: descriptionStyle ??
-                      TextStyle(
-                        fontSize: 17,
-                        color: backgroundColor.accent.withAlpha(200),
-                      ),
-                ),
-              ),
-            ),
-          if (totalEvents > 1)
-            Expanded(
-              child: Text(
-                "+${totalEvents - 1} more",
-                style: (descriptionStyle ??
-                        TextStyle(
-                          color: backgroundColor.accent.withAlpha(200),
-                        ))
-                    .copyWith(fontSize: 17),
-              ),
-            ),
-        ],
+              // if (description?.isNotEmpty ?? false)
+              //   Expanded(
+              //     child: Padding(
+              //       padding: const EdgeInsets.only(bottom: 15.0),
+              //       child: RichText(
+              //         text: TextSpan(
+              //           text: '${description!}\n',
+              //           style: descriptionStyle ??
+              //               TextStyle(
+              //                 fontSize: calculateFontSize(
+              //                     constraints.maxWidth, 12.0, 14.0),
+              //                 color: backgroundColor.accent.withAlpha(200),
+              //               ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // if (totalEvents > 1)
+              //   Expanded(
+              //     child: RichText(
+              //       text: TextSpan(
+              //         text: "+${totalEvents - 1} more",
+              //         style: (descriptionStyle ??
+              //                 TextStyle(
+              //                   color: backgroundColor.accent.withAlpha(200),
+              //                 ))
+              //             .copyWith(
+              //                 fontSize: calculateFontSize(
+              //                     constraints.maxWidth, 12.0, 14.0)),
+              //       ),
+              //     ),
+              //   ),
+            ],
+          );
+        },
       ),
     );
+  }
+
+  double calculateFontSize(
+    double maxWidth,
+    double fontSize,
+    double maxFontSize,
+  ) {
+    const double minFactor = 0.85;
+    // const double maxFactor = 1.2;
+
+    double scaledFontSize = fontSize * (maxWidth / 375.0);
+
+    // Ensure the font size doesn't go below the minimum factor
+    scaledFontSize = scaledFontSize < fontSize * minFactor
+        ? fontSize * minFactor
+        : scaledFontSize;
+
+    // Ensure the font size doesn't exceed the maximum factor
+    return scaledFontSize > maxFontSize ? maxFontSize : scaledFontSize;
   }
 }
 
