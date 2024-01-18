@@ -192,3 +192,66 @@ extension MyList on List<CalendarEventData> {
 extension TimerOfDayExtension on TimeOfDay {
   int get getTotalMinutes => hour * 60 + minute;
 }
+
+extension StringExtensions on String {
+  // double _calculateTextHeightWithWrap(
+  //   String text,
+  //   TextStyle textStyle,
+  //   double maxWidth,
+  // ) {
+  //   final textPainter = TextPainter(
+  //     text: TextSpan(text: text, style: textStyle),
+  //     textDirection: TextDirection.ltr,
+  //     maxLines: 999, // Large number to ensure accurate height calculation
+  //   );
+
+  //   // if (textStyle.overflow == TextOverflow.ellipsis) {
+  //   //   // If ellipsis is used, limit the layout width to the specified max width
+  //   //   textPainter.layout(maxWidth: maxWidth);
+  //   // } else {
+  //   //   // If soft wrap is allowed, use an unconstrained layout
+  //   //   textPainter.layout();
+  //   // }
+
+  //   textPainter.layout(maxWidth: maxWidth);
+  //   return textPainter.height + textPainter.preferredLineHeight;
+  // }
+
+  double calculateTextHeight({
+    required BuildContext context,
+    required double maxWidth,
+    required TextStyle textStyle,
+    TextDirection textDirection = TextDirection.ltr,
+    EdgeInsets? padding,
+  }) {
+    if (this.isEmpty) {
+      return 0.0;
+    }
+
+    final ts = TextSpan(
+      text: this,
+      style: textStyle.copyWith(
+        fontSize: MediaQuery.textScalerOf(context).scale(
+          textStyle.fontSize!,
+        ),
+      ),
+    );
+
+    final strutStyle = StrutStyle(
+      fontSize: textStyle.fontSize,
+      // height: 1.2, // Adjust as needed
+    );
+
+    final tp = TextPainter(
+      text: ts,
+      textDirection: textDirection,
+      strutStyle: strutStyle,
+    );
+    tp.layout(maxWidth: maxWidth);
+
+    final numLines = tp.computeLineMetrics().length;
+    final textHeight = (numLines * tp.size.height);
+
+    return textHeight;
+  }
+}

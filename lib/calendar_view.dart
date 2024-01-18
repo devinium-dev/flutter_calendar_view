@@ -21,3 +21,4 @@ export './src/typedefs.dart';
 export './src/week_view/week_view.dart';
 export './src/constants.dart';
 export './src/components/clickable_circle_avatar.dart';
+export './src/components/overlay_tooltip.dart';
