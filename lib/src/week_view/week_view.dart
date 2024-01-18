@@ -3,7 +3,6 @@
 // that can be found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../calendar_constants.dart';
 import '../calendar_controller_provider.dart';
@@ -781,7 +780,7 @@ class WeekViewState<T extends Object?> extends State<WeekView<T>> {
       //     '${DateFormat('h:mm').format(startTime!)} — ${DateFormat('h:mm').format(endTime!)}';
 
       return RoundedEventTile(
-        timeDurationText: '',
+        eventDuration: '',
         borderRadius: BorderRadius.circular(6.0),
         title: events[0].title,
         titleStyle: events[0].titleStyle ??

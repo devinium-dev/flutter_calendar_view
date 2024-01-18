@@ -670,7 +670,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
           '${DateFormat('h:mm').format(startTime!)} — ${DateFormat('h:mm').format(endTime!)}';
 
       return RoundedEventTile(
-        timeDurationText: timeDurationText,
+        eventDuration: timeDurationText,
         borderRadius: BorderRadius.circular(10.0),
         title: events[0].title,
         totalEvents: events.length - 1,

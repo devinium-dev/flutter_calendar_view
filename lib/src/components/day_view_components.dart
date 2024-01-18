@@ -11,13 +11,14 @@ import '../extensions.dart';
 import '../style/header_style.dart';
 import '../typedefs.dart';
 import 'common_components.dart';
+import 'overlay_tooltip.dart';
 
 /// This class defines default tile to display in day view.
 class RoundedEventTile extends StatelessWidget {
   /// Title of the tile.
   final String title;
 
-  final String? timeDurationText;
+  final String? eventDuration;
 
   /// Description of the tile.
   final String? description;
@@ -45,11 +46,17 @@ class RoundedEventTile extends StatelessWidget {
   /// Style for description
   final TextStyle? descriptionStyle;
 
+  final TextStyle? eventDurationStyle;
+
+  final String? tooltipMessage;
+
+  final bool showToolTipOverlay;
+
   /// This is default tile to display in day view.
   const RoundedEventTile({
     Key? key,
     required this.title,
-    this.timeDurationText,
+    this.eventDuration,
     this.padding = EdgeInsets.zero,
     this.margin = EdgeInsets.zero,
     this.description,
@@ -58,17 +65,22 @@ class RoundedEventTile extends StatelessWidget {
     this.backgroundColor = Colors.blue,
     this.titleStyle,
     this.descriptionStyle,
+    this.eventDurationStyle,
+    this.tooltipMessage,
+    this.showToolTipOverlay = true,
   }) : super(key: key);
 
   bool get hasTitle => title.isNotEmpty;
-  bool get hasTimeDurationText =>
-      timeDurationText != null && timeDurationText!.trim().isNotEmpty;
+  bool get hasEventDuration =>
+      eventDuration != null && eventDuration!.trim().isNotEmpty;
   bool get hasDescription =>
       description != null && description!.trim().isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
+      height: double.infinity,
       padding: padding,
       margin: margin,
       decoration: BoxDecoration(
@@ -78,142 +90,165 @@ class RoundedEventTile extends StatelessWidget {
       child: LayoutBuilder(
         builder: (_, constraints) {
           double remainingHeight = constraints.maxHeight;
+          final remainingWidth = constraints.maxWidth;
+
+          // print('\n----- $title -----');
+          // print('maxHeight: $remainingHeight');
+          // print('maxWidth: $remainingWidth');
 
           final titleTextStyle = titleStyle ??
               TextStyle(
-                fontSize: calculateFontSize(
-                  constraints.maxWidth,
-                  14.0,
-                  16.0,
-                ),
+                fontSize: 13.0,
+                fontWeight: FontWeight.bold,
+                height: 0.98,
                 color: backgroundColor.accent,
-                height: 1.5,
               );
 
-          final timeDurationTextStyle = TextStyle(
-            fontSize: calculateFontSize(
-              constraints.maxWidth,
-              12.0,
-              14.0,
-            ),
-            color: backgroundColor.accent,
-            height: 1.5,
-          );
+          final eventDurationTextStyle = eventDurationStyle ??
+              TextStyle(
+                fontSize: 12.0,
+                height: 0.98,
+                color: backgroundColor.accent,
+              );
 
           final descriptionTextStyle = descriptionStyle ??
               TextStyle(
-                fontSize: calculateFontSize(
-                  constraints.maxWidth,
-                  12.0,
-                  14.0,
-                ),
+                fontSize: 12.0,
+                height: 0.98,
                 color: backgroundColor.accent.withAlpha(200),
               );
 
           List<Widget> renderedTexts = [];
 
-          void addTextWidget(Widget textWidget, double textHeight) {
-            remainingHeight -= textHeight;
-            if (remainingHeight >= 0) {
+          void _addTextWidget(Widget textWidget, double textHeight) {
+            if (remainingHeight - textHeight > 0) {
+              remainingHeight -= textHeight;
               renderedTexts.add(textWidget);
             }
           }
 
-          if (hasTitle) {
-            final titleHeight = calculateTextHeight(
-                title, titleTextStyle, constraints.maxWidth);
-            addTextWidget(
+          if (remainingWidth <= 10.0) {
+            remainingHeight = 0;
+          }
+
+          if (remainingHeight <= 10.0) {
+            remainingHeight = 0;
+          }
+
+          // if (hasTitle) {
+          final titleHeight = title.calculateTextHeight(
+            context: context,
+            maxWidth: remainingWidth,
+            textStyle: titleTextStyle,
+          );
+
+          // print('titleHeight: $titleHeight');
+
+          if (remainingHeight > titleHeight) {
+            _addTextWidget(
               Text(
                 title,
                 style: titleTextStyle,
-                softWrap: true,
-                overflow: TextOverflow.fade,
+                // softWrap: true,
+                overflow: remainingWidth >= 40.0 ? null : TextOverflow.ellipsis,
               ),
               titleHeight,
             );
+          } else if (remainingHeight >= 14.0) {
+            renderedTexts.add(
+              Text(
+                title,
+                style: titleTextStyle,
+                // softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
+            );
+          } else {
+            remainingHeight = 0;
           }
 
-          if (hasTimeDurationText) {
-            final timeDurationHeight = calculateTextHeight(
-                timeDurationText!, timeDurationTextStyle, constraints.maxWidth);
-            addTextWidget(
-              Text(
-                timeDurationText!,
-                style: timeDurationTextStyle,
-                softWrap: true,
-                overflow: TextOverflow.fade,
+          // }
+
+          if (hasEventDuration) {
+            final paddingTop = renderedTexts.length >= 1 ? 6.0 : 0.0;
+            final timeDurationHeight = eventDuration!.calculateTextHeight(
+              context: context,
+              maxWidth: remainingWidth,
+              textStyle: eventDurationTextStyle,
+            );
+            // print('timeDurationHeight: $timeDurationHeight');
+
+            _addTextWidget(
+              Padding(
+                padding: EdgeInsets.only(top: paddingTop),
+                child: Text(
+                  eventDuration!,
+                  style: eventDurationTextStyle,
+                ),
               ),
-              timeDurationHeight,
+              timeDurationHeight + paddingTop,
             );
           }
 
           if (hasDescription) {
-            final descriptionHeight = calculateTextHeight(
-                description!, descriptionTextStyle, constraints.maxWidth);
-            addTextWidget(
+            final paddingTop = renderedTexts.length >= 1 ? 4.0 : 0.0;
+            final descriptionHeight = description!.calculateTextHeight(
+              context: context,
+              maxWidth: remainingWidth,
+              textStyle: descriptionTextStyle,
+            );
+
+            // print('descriptionHeight: $descriptionHeight');
+
+            _addTextWidget(
               Padding(
-                padding: const EdgeInsets.only(bottom: 15.0),
+                padding: EdgeInsets.only(top: paddingTop),
                 child: Text(
                   description!,
                   style: descriptionTextStyle,
-                  softWrap: true,
-                  overflow: TextOverflow.fade,
+                  // softWrap: true,
+                  overflow:
+                      remainingWidth >= 40.0 ? null : TextOverflow.ellipsis,
                 ),
               ),
-              descriptionHeight,
+              descriptionHeight + paddingTop,
             );
           }
 
           if (totalEvents > 1) {
-            final moreHeight = calculateTextHeight("+${totalEvents - 1} more",
-                descriptionTextStyle, constraints.maxWidth);
-            addTextWidget(
+            final moreHeight = '+${totalEvents - 1} more'.calculateTextHeight(
+              context: context,
+              maxWidth: remainingWidth,
+              textStyle: descriptionTextStyle,
+            );
+
+            // print('moreHeight: $moreHeight');
+
+            _addTextWidget(
               Text(
                 "+${totalEvents - 1} more",
                 style: descriptionTextStyle,
-                softWrap: true,
-                overflow: TextOverflow.fade,
+                // softWrap: true,
+                overflow: remainingWidth >= 40.0 ? null : TextOverflow.ellipsis,
               ),
               moreHeight,
             );
           }
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: renderedTexts,
+          return OverlayTooltip(
+            message: tooltipMessage ?? '',
+            showOverlay: renderedTexts.length >= 1 ? showToolTipOverlay : false,
+            child: renderedTexts.length >= 1
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    children: renderedTexts,
+                  )
+                : SizedBox.expand(),
           );
         },
       ),
     );
-  }
-
-  double calculateTextHeight(String text, TextStyle? style, double maxWidth) {
-    final textPainter = TextPainter(
-      text: TextSpan(text: text, style: style),
-      maxLines: 1,
-      textDirection: TextDirection.ltr,
-    )..layout(maxWidth: maxWidth);
-    return textPainter.size.height;
-  }
-
-  double calculateFontSize(
-    double maxWidth,
-    double fontSize,
-    double maxFontSize,
-  ) {
-    const double minFactor = 0.85;
-    // const double maxFactor = 1.2;
-
-    double scaledFontSize = fontSize * (maxWidth / 375.0);
-
-    // Ensure the font size doesn't go below the minimum factor
-    scaledFontSize = scaledFontSize < fontSize * minFactor
-        ? fontSize * minFactor
-        : scaledFontSize;
-
-    // Ensure the font size doesn't exceed the maximum factor
-    return scaledFontSize > maxFontSize ? maxFontSize : scaledFontSize;
   }
 }
 
